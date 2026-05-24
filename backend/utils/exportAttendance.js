@@ -16,47 +16,50 @@ const exportAttendanceToExcel = async (student) => {
 
     try {
 
-        // CURRENT YEAR
+        // ================= CURRENT YEAR =================
         const currentYear =
             new Date().getFullYear();
 
-        // CLASS
+        // ================= CLASS =================
         const classNum =
             Number(student.className);
 
-        // SECTION
+        // ================= SECTION =================
         const section =
             student.section.toUpperCase();
 
-        // FOLDER NAME
+        // ================= FOLDER NAME =================
         const folderName =
             `Class_${classNum}_${currentYear}`;
 
-        // FOLDER PATH
+        // ================= FOLDER PATH =================
         const folderPath = path.join(
             __dirname,
             "../exports/attendance",
             folderName
         );
 
-        // CREATE FOLDER
+        // ================= CREATE FOLDER =================
         if (!fs.existsSync(folderPath)) {
+
             fs.mkdirSync(folderPath, {
                 recursive: true
             });
         }
 
-        // FILE NAME
+        // ================= FILE NAME =================
         const fileName =
             `Section_${section}.xlsx`;
 
-        // FILE PATH
+        // ================= FILE PATH =================
         const filePath = path.join(
             folderPath,
             fileName
         );
 
-        let workbook = new ExcelJS.Workbook();
+        let workbook =
+            new ExcelJS.Workbook();
+
         let worksheet;
 
         // ================= FILE EXISTS =================
@@ -64,61 +67,43 @@ const exportAttendanceToExcel = async (student) => {
 
             await workbook.xlsx.readFile(filePath);
 
-            worksheet = workbook.worksheets[0];
+            worksheet =
+                workbook.worksheets[0];
 
             // IF WORKSHEET MISSING
             if (!worksheet) {
-                worksheet = workbook.addWorksheet("Attendance");
-            }
 
-            // RE-APPLY COLUMN KEYS (keys don't persist in .xlsx format)
-            worksheet.columns = COLUMNS;
+                worksheet =
+                    workbook.addWorksheet("Attendance");
+            }
 
         } else {
 
-            worksheet = workbook.addWorksheet("Attendance");
-
-            worksheet.columns = COLUMNS;
+            worksheet =
+                workbook.addWorksheet("Attendance");
         }
 
-        // ================= DUPLICATE CHECK =================
-        let alreadyExists = false;
+        // ================= APPLY COLUMNS =================
+        worksheet.columns = COLUMNS;
 
-        worksheet.eachRow((row, rowNumber) => {
+        // ================= ALWAYS ADD ROW =================
+        worksheet.addRow({
 
-            if (rowNumber === 1) return;
-
-            const rowRollNo = row.getCell(2).value;
-            const rowDate   = row.getCell(5).value;
-
-            if (
-                rowRollNo == student.rollNo &&
-                rowDate   == student.date
-            ) {
-                alreadyExists = true;
-            }
+            name:      student.name,
+            rollNo:    student.rollNo,
+            className: student.className,
+            section:   student.section,
+            date:      student.date,
+            time:      student.time,
+            status:    student.status
         });
 
-        // ================= ADD ROW =================
-        if (!alreadyExists) {
+        console.log(
+            "Attendance Added:",
+            student.name
+        );
 
-            worksheet.addRow({
-                name:      student.name,
-                rollNo:    student.rollNo,
-                className: student.className,
-                section:   student.section,
-                date:      student.date,
-                time:      student.time,
-                status:    student.status
-            });
-
-            console.log(
-                "Attendance Added:",
-                student.name
-            );
-        }
-
-        // SAVE FILE
+        // ================= SAVE FILE =================
         await workbook.xlsx.writeFile(filePath);
 
         console.log(

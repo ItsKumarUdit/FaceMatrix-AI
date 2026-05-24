@@ -2,13 +2,46 @@ const express = require("express");
 
 const router = express.Router();
 
+const multer = require("multer");
+
+const path = require("path");
+
 const {
     registerUser,
     uploadUserImage,
-    recognizeGroup
+    recognizeGroup,
+     getUsers,
+     deleteUser,
+     getAttendance,
+    deleteAttendance
+
 } = require("../controllers/userController");
 
-const upload = require("../config/multer");
+ 
+
+
+// ================= MULTER STORAGE =================
+const storage = multer.diskStorage({
+
+    destination: (req, file, cb) => {
+
+        cb(null, "uploads/");
+    },
+
+    filename: (req, file, cb) => {
+
+        cb(
+            null,
+            Date.now() + path.extname(file.originalname)
+        );
+    }
+});
+
+
+// ================= MULTER =================
+const upload = multer({
+    storage
+});
 
 
 // ================= REGISTER USER =================
@@ -16,28 +49,34 @@ router.post(
     "/register",
     registerUser
 );
+router.get("/", getUsers);
+router.delete("/:id", deleteUser);
+
+router.get(
+    "/attendance-history",
+    getAttendance
+);
+router.delete(
+    "/attendance/:id",
+    deleteAttendance
+);
+ 
 
 
-// ================= UPLOAD MULTIPLE USER IMAGES =================
+// ================= UPLOAD USER IMAGES =================
 router.post(
     "/upload/:id",
-
-    // MULTIPLE USER PHOTOS
-    upload.array("images", 10),
-
+    upload.array("images"),
     uploadUserImage
 );
 
 
-// ================= RECOGNIZE MULTIPLE GROUP IMAGES =================
+// ================= RECOGNIZE GROUP =================
 router.post(
     "/recognize-group",
-
-    // MULTIPLE GROUP PHOTOS
-    upload.array("images", 10),
-
+    upload.array("images"),
     recognizeGroup
 );
-
+ 
 
 module.exports = router;

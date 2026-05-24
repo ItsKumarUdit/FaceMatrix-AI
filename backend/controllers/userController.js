@@ -13,6 +13,7 @@ const fs = require("fs");
 
 
 
+
 // ================= REGISTER USER =================
 const registerUser = async (req, res) => {
 
@@ -80,12 +81,19 @@ const registerUser = async (req, res) => {
             });
         }
 
-        // ================= CHECK EXISTING USER =================
+        // ================= SCHOOL-STYLE DUPLICATE CHECK =================
         const existingUser =
             await User.findOne({
-                rollNo
+
+                rollNo,
+
+                className: classNum,
+
+                section: sectionUpper
+
             });
 
+        // SAME ROLL + SAME CLASS + SAME SECTION
         if (existingUser) {
 
             return res.status(400).json({
@@ -93,7 +101,7 @@ const registerUser = async (req, res) => {
                 success: false,
 
                 message:
-                    "User already exists"
+                    "User already exists in this class and section"
 
             });
         }
@@ -215,11 +223,15 @@ const uploadUserImage = async (req, res) => {
                 file.path
             );
 
-            // SAVE FIRST IMAGE
-            if (!user.image) {
+            // SAVE FIRST IMAGE PATH
+            // INITIALIZE IMAGE ARRAY
+if (!user.image) {
 
-                user.image = file.path;
-            }
+    user.image = [];
+}
+
+// SAVE IMAGE PATH
+user.image.push(file.path);
 
             try {
 
@@ -245,7 +257,7 @@ const uploadUserImage = async (req, res) => {
                         }
                     );
 
-                // AI REJECTION
+                // AI VALIDATION FAILED
                 if (
                     !aiResponse.data.success
                 ) {
@@ -356,10 +368,61 @@ const uploadUserImage = async (req, res) => {
     }
 };
 
+const getUsers = async (req, res) => {
+
+    try {
+
+        const users = await User.find();
+
+        res.status(200).json(users);
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            message: "Failed to fetch users"
+        });
+
+    }
+
+};
+const deleteUser = async (req, res) => {
+
+    try {
+
+        const userId = req.params.id;
+
+        await User.findByIdAndDelete(userId);
+
+        res.status(200).json({
+            message: "User deleted successfully"
+        });
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            message: "Delete failed"
+        });
+
+    }
+
+};
+
+
+
 
 
 
 // ================= RECOGNIZE MULTIPLE GROUP IMAGES =================
+// ================= RECOGNIZE MULTIPLE GROUP IMAGES =================
+
 const recognizeGroup = async (req, res) => {
 
     try {
@@ -385,13 +448,18 @@ const recognizeGroup = async (req, res) => {
 
         let allResults = [];
 
-        // PROCESS EACH GROUP IMAGE
+        // ================= PROCESS EACH IMAGE SEPARATELY =================
+
         for (const file of files) {
 
             console.log(
                 "PROCESSING GROUP IMAGE:",
                 file.path
             );
+
+            // CURRENT IMAGE PATH
+            const currentImagePath =
+                file.path.replace(/\\/g, "/");
 
             // CREATE FORMDATA
             const formData =
@@ -404,7 +472,7 @@ const recognizeGroup = async (req, res) => {
                 )
             );
 
-            // SEND TO FLASK RECOGNITION API
+            // SEND TO FLASK API
             const aiResponse =
                 await axios.post(
                     "http://127.0.0.1:5002/recognize-group",
@@ -426,14 +494,15 @@ const recognizeGroup = async (req, res) => {
             // SAVE RESULT
             allResults.push(result);
 
-            // GET RECOGNIZED STUDENTS
+            // RECOGNIZED STUDENTS
             const students =
                 result.recognizedStudents || [];
 
-            // LOOP THROUGH STUDENTS
+            // ================= LOOP STUDENTS =================
+
             for (const student of students) {
 
-                // SKIP UNKNOWN PERSON
+                // SKIP UNKNOWN
                 if (
                     student.name ===
                     "Unknown Person"
@@ -451,7 +520,13 @@ const recognizeGroup = async (req, res) => {
                     await User.findOne({
 
                         rollNo:
-                            student.rollNo
+                            student.rollNo,
+
+                        className:
+                            student.className,
+
+                        section:
+                            student.section
 
                     });
 
@@ -465,17 +540,25 @@ const recognizeGroup = async (req, res) => {
                         new Date()
                             .toLocaleTimeString();
 
-                    // PREVENT DUPLICATE ATTENDANCE
+                    // CHECK EXISTING ATTENDANCE
                     const existingAttendance =
                         await Attendance.findOne({
 
                             rollNo:
                                 matchedUser.rollNo,
 
+                            className:
+                                matchedUser.className,
+
+                            section:
+                                matchedUser.section,
+
                             date: today
+
                         });
 
-                    // SAVE ATTENDANCE
+                    // ================= NEW ATTENDANCE =================
+
                     if (!existingAttendance) {
 
                         await Attendance.create({
@@ -499,7 +582,12 @@ const recognizeGroup = async (req, res) => {
 
                             time: currentTime,
 
-                            status: "Present"
+                            status: "Present",
+
+                            // ONLY CURRENT IMAGE
+                            attendanceImages: [
+                                currentImagePath
+                            ]
 
                         });
 
@@ -508,7 +596,12 @@ const recognizeGroup = async (req, res) => {
                             matchedUser.name
                         );
 
-                        // ================= ATTENDANCE EXCEL EXPORT =================
+                        console.log(
+                            "IMAGE SAVED:",
+                            currentImagePath
+                        );
+
+                        // EXPORT EXCEL
                         await exportAttendanceToExcel({
 
                             name:
@@ -535,15 +628,53 @@ const recognizeGroup = async (req, res) => {
                             "ATTENDANCE EXCEL UPDATED"
                         );
 
-                    } else {
+                    }
 
-                        console.log(
-                            "ATTENDANCE ALREADY EXISTS"
-                        );
+                    // ================= EXISTING ATTENDANCE =================
+
+                    else {
+
+                        // CHECK IF IMAGE ALREADY EXISTS
+                        const imageAlreadyExists =
+
+                            existingAttendance
+                                .attendanceImages
+                                ?.includes(
+                                    currentImagePath
+                                );
+
+                        // ADD NEW IMAGE
+                        if (!imageAlreadyExists) {
+
+                            existingAttendance
+                                .attendanceImages
+                                .push(
+                                    currentImagePath
+                                );
+
+                            await existingAttendance.save();
+
+                            console.log(
+                                "NEW IMAGE ADDED:",
+                                matchedUser.name
+                            );
+
+                        }
+
+                        else {
+
+                            console.log(
+                                "IMAGE ALREADY EXISTS"
+                            );
+
+                        }
+
                     }
                 }
             }
         }
+
+        // ================= RESPONSE =================
 
         res.status(200).json({
 
@@ -557,7 +688,9 @@ const recognizeGroup = async (req, res) => {
 
         });
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.log(error);
 
@@ -572,9 +705,76 @@ const recognizeGroup = async (req, res) => {
                 error.message
 
         });
+
     }
+
 };
 
+const getAttendance = async (req, res) => {
+
+    try {
+
+        const attendance =
+            await Attendance.find()
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+
+            success: true,
+
+            attendance
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: "Failed to fetch attendance"
+
+        });
+
+    }
+
+};
+const deleteAttendance =
+    async (req, res) => {
+
+    try {
+
+        await Attendance.findByIdAndDelete(
+            req.params.id
+        );
+
+        res.status(200).json({
+
+            message:
+                "Attendance Deleted"
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+
+            message:
+                "Delete Failed"
+
+        });
+
+    }
+
+};
 
 
 
@@ -583,6 +783,10 @@ module.exports = {
 
     registerUser,
     uploadUserImage,
-    recognizeGroup
+    recognizeGroup,
+    getUsers,
+    deleteUser,
+    getAttendance,
+        deleteAttendance
 
 };
