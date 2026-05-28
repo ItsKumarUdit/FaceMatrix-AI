@@ -18,7 +18,7 @@ function Dashboard() {
 
   const [students, setStudents] = useState([]);
   const [attendance, setAttendance] = useState([]);
-  const [loading, setLoading] = useState(true);  // ADD THIS
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
 
@@ -40,7 +40,7 @@ function Dashboard() {
 
     } finally {
 
-      setLoading(false);  // ADD THIS
+      setLoading(false);
 
     }
 
@@ -65,7 +65,9 @@ function Dashboard() {
 
     try {
 
-      const confirmDelete = window.confirm("Delete this attendance record?");
+      const confirmDelete = window.confirm(
+        "Delete this attendance record?"
+      );
 
       if (!confirmDelete) return;
 
@@ -84,62 +86,127 @@ function Dashboard() {
 
   };
 
-  // PRESENT TODAY
+  // ================= PRESENT TODAY =================
 
   const today = new Date();
-  const currentDay = today.getDate();
-  const currentMonth = today.getMonth() + 1;
-  const currentYear = today.getFullYear();
 
   const presentToday = attendance.filter((item) => {
 
-    const parts = item.date.split("/");
-    const day = Number(parts[0]);
-    const month = Number(parts[1]);
-    const year = Number(parts[2]);
+    if (!item.date) return false;
+
+    if (item.status !== "Present") return false;
+
+const [day, month, year] = item.date
+  .split("/")
+  .map(Number);
+
+    const attendanceDate = new Date(
+      year,
+      month - 1,
+      day
+    );
 
     return (
-      day === currentDay &&
-      month === currentMonth &&
-      year === currentYear
+      attendanceDate.getDate() === today.getDate() &&
+      attendanceDate.getMonth() === today.getMonth() &&
+      attendanceDate.getFullYear() === today.getFullYear()
     );
 
   });
 
-  // CLASS DATA
+  // ================= UNIQUE PRESENT =================
+
+const uniquePresentToday = [
+  ...new Set(
+    presentToday.map(
+      (item) =>
+        `${item.rollNo}-${item.className}-${item.section}`
+    )
+  ),
+];
+
+  // ================= CLASS DATA =================
 
   const classMap = {};
 
-  attendance.forEach((item) => {
+presentToday.forEach((item) => {
 
-    if (!classMap[item.className]) {
-      classMap[item.className] = 0;
-    }
+  if (!classMap[item.className]) {
+    classMap[item.className] = 0;
+  }
 
-    classMap[item.className]++;
+  classMap[item.className]++;
 
-  });
+});
 
   const chartData = Object.keys(classMap).map((key) => ({
     class: key,
     attendance: classMap[key],
   }));
 
-  // PIE DATA
+  // ================= PIE DATA =================
 
   const pieData = [
-    { name: "Present", value: presentToday.length },
-    { name: "Absent", value: students.length - presentToday.length },
+    {
+      name: "Present",
+      value: uniquePresentToday.length,
+    },
+    {
+      name: "Absent",
+      value: Math.max(
+        students.length - uniquePresentToday.length,
+        0
+      ),
+    },
   ];
 
   const COLORS = ["#22c55e", "#ef4444"];
 
-  // LOADING STATE  -- ADD THIS BLOCK
-  if (loading) return (
-    <div className="dashboard">
-      <h2 style={{ color: "#cbd5e1" }}>Loading...</h2>
-    </div>
-  );
+  // ================= RECENT ATTENDANCE =================
+
+  const recentAttendance = attendance
+    .filter((item) => item.status === "Present")
+    .slice()
+    .sort((a, b) => {
+
+      const [dayA, monthA, yearA] = a.date
+        .split("/")
+        .map(Number);
+
+      const [dayB, monthB, yearB] = b.date
+        .split("/")
+        .map(Number);
+
+      const fullDateA = new Date(
+        yearA,
+        monthA - 1,
+        dayA
+      );
+
+      const fullDateB = new Date(
+        yearB,
+        monthB - 1,
+        dayB
+      );
+
+      return fullDateB - fullDateA;
+
+    })
+    .slice(0, 5);
+
+  // ================= LOADING =================
+
+  if (loading) {
+
+    return (
+      <div className="dashboard">
+        <h2 style={{ color: "#cbd5e1" }}>
+          Loading...
+        </h2>
+      </div>
+    );
+
+  }
 
   return (
 
@@ -147,12 +214,13 @@ function Dashboard() {
 
       <h1>Analytics Dashboard</h1>
 
-      {/* STATS */}
+      {/* ================= STATS ================= */}
 
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(220px, 1fr))",
           gap: "20px",
           marginTop: "30px",
         }}
@@ -170,37 +238,54 @@ function Dashboard() {
 
         <div className="card">
           <h3>Present Today</h3>
-          <h1>{presentToday.length}</h1>
+          <h1>{uniquePresentToday.length}</h1>
         </div>
 
       </div>
 
-      {/* CHARTS */}
+      {/* ================= CHARTS ================= */}
 
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(450px, 1fr))",
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(450px, 1fr))",
           gap: "20px",
           marginTop: "40px",
         }}
       >
 
-        {/* BAR CHART */}
+        {/* ================= BAR CHART ================= */}
 
         <div className="card" style={{ height: "400px" }}>
 
-          <h3 style={{ marginBottom: "20px" }}>Attendance by Class</h3>
+          <h3 style={{ marginBottom: "20px" }}>
+            Today's Attendance by Class
+          </h3>
 
           {chartData.length > 0 ? (
 
             <ResponsiveContainer width="100%" height="85%">
+
               <BarChart data={chartData}>
-                <XAxis dataKey="class" stroke="#ffffff" />
+
+                <XAxis
+                  dataKey="class"
+                  stroke="#ffffff"
+                />
+
                 <YAxis stroke="#ffffff" />
+
                 <Tooltip />
-                <Bar dataKey="attendance" fill="#2563eb" radius={[10, 10, 0, 0]} />
+
+                <Bar
+                  dataKey="attendance"
+                  fill="#2563eb"
+                  radius={[10, 10, 0, 0]}
+                />
+
               </BarChart>
+
             </ResponsiveContainer>
 
           ) : (
@@ -211,14 +296,18 @@ function Dashboard() {
 
         </div>
 
-        {/* PIE CHART */}
+        {/* ================= PIE CHART ================= */}
 
         <div className="card" style={{ height: "400px" }}>
 
-          <h3 style={{ marginBottom: "20px" }}>Attendance Status</h3>
+          <h3 style={{ marginBottom: "20px" }}>
+            Attendance Status
+          </h3>
 
           <ResponsiveContainer width="100%" height="85%">
+
             <PieChart>
+
               <Pie
                 data={pieData}
                 dataKey="value"
@@ -227,27 +316,43 @@ function Dashboard() {
                 outerRadius={120}
                 label
               >
+
                 {pieData.map((entry, index) => (
-                  <Cell key={index} fill={COLORS[index]} />
+
+                  <Cell
+                    key={index}
+                    fill={COLORS[index]}
+                  />
+
                 ))}
+
               </Pie>
+
               <Tooltip />
+
             </PieChart>
+
           </ResponsiveContainer>
 
         </div>
 
       </div>
 
-      {/* RECENT ATTENDANCE */}
+      {/* ================= RECENT ATTENDANCE ================= */}
 
-      <div className="table-container" style={{ marginTop: "40px" }}>
+      <div
+        className="table-container"
+        style={{ marginTop: "40px" }}
+      >
 
-        <h2 style={{ marginBottom: "20px" }}>Recent Attendance</h2>
+        <h2 style={{ marginBottom: "20px" }}>
+          Recent Attendance
+        </h2>
 
         <table className="attendance-table">
 
           <thead>
+
             <tr>
               <th>Name</th>
               <th>Roll No</th>
@@ -257,31 +362,39 @@ function Dashboard() {
               <th>Time</th>
               <th>Action</th>
             </tr>
+
           </thead>
 
           <tbody>
-            {attendance
-              .slice()
-              .reverse()
-              .slice(0, 5)
-              .map((item) => (
-                <tr key={item._id}>
-                  <td>{item.name}</td>
-                  <td>{item.rollNo}</td>
-                  <td>{item.className}</td>
-                  <td>{item.section}</td>
-                  <td>{item.date}</td>
-                  <td>{item.time}</td>
-                  <td>
-                    <button
-                      className="attendance-delete-btn"
-                      onClick={() => deleteAttendance(item._id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+
+            {recentAttendance.map((item) => (
+
+              <tr key={item._id}>
+
+                <td>{item.name}</td>
+                <td>{item.rollNo}</td>
+                <td>{item.className}</td>
+                <td>{item.section}</td>
+                <td>{item.date}</td>
+                <td>{item.time}</td>
+
+                <td>
+
+                  <button
+                    className="attendance-delete-btn"
+                    onClick={() =>
+                      deleteAttendance(item._id)
+                    }
+                  >
+                    Delete
+                  </button>
+
+                </td>
+
+              </tr>
+
+            ))}
+
           </tbody>
 
         </table>

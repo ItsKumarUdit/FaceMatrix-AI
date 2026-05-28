@@ -11,9 +11,12 @@ import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Students from "./pages/Students";
 import Attendance from "./pages/Attendance";
+import AttendanceRecord from "./pages/AttendanceRecord";
+import HolidayManagement from "./pages/HolidayManagement";
 import RegisterStudent from "./pages/RegisterStudent";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
+
 
 function App() {
 
@@ -52,6 +55,15 @@ function App() {
             <Route
               path="/attendance"
               element={<Attendance />}
+            />
+
+            <Route
+              path="/attendance-record"
+              element={<AttendanceRecord />}
+            />
+                        <Route
+              path="/holiday-management"
+              element={<HolidayManagement />}
             />
 
             <Route

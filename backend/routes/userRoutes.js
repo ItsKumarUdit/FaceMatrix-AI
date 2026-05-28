@@ -1,82 +1,34 @@
 const express = require("express");
-
 const router = express.Router();
-
-const multer = require("multer");
-
-const path = require("path");
+const multer = require("../config/multer");
 
 const {
     registerUser,
     uploadUserImage,
     recognizeGroup,
-     getUsers,
-     deleteUser,
-     getAttendance,
-    deleteAttendance
-
+    getUsers,
+    deleteUser,
+    getAttendance,
+    deleteAttendance,
+    getAttendanceRecord,
+    markAbsentees
 } = require("../controllers/userController");
 
- 
-
-
-// ================= MULTER STORAGE =================
-const storage = multer.diskStorage({
-
-    destination: (req, file, cb) => {
-
-        cb(null, "uploads/");
-    },
-
-    filename: (req, file, cb) => {
-
-        cb(
-            null,
-            Date.now() + path.extname(file.originalname)
-        );
-    }
-});
-
-
-// ================= MULTER =================
-const upload = multer({
-    storage
-});
-
-
-// ================= REGISTER USER =================
-router.post(
-    "/register",
-    registerUser
-);
+// ================= USER ROUTES =================
+router.post("/register", registerUser);
+router.post("/upload-image/:id", multer.array("images"), uploadUserImage);
 router.get("/", getUsers);
 router.delete("/:id", deleteUser);
 
-router.get(
-    "/attendance-history",
-    getAttendance
-);
-router.delete(
-    "/attendance/:id",
-    deleteAttendance
-);
- 
+// ================= ATTENDANCE ROUTES =================
+router.post("/recognize-group", multer.array("images"), recognizeGroup);
+router.get("/attendance-history", getAttendance);
+router.delete("/attendance/:id", deleteAttendance);
 
+// ================= NEW: ATTENDANCE RECORD (monthly grid) =================
+router.get("/attendance-record", getAttendanceRecord);
 
-// ================= UPLOAD USER IMAGES =================
-router.post(
-    "/upload/:id",
-    upload.array("images"),
-    uploadUserImage
-);
-
-
-// ================= RECOGNIZE GROUP =================
-router.post(
-    "/recognize-group",
-    upload.array("images"),
-    recognizeGroup
-);
- 
+// ================= NEW: MARK ABSENTEES (called by cron) =================
+router.post("/mark-absentees", markAbsentees);
 
 module.exports = router;

@@ -7,7 +7,7 @@ function Sidebar() {
     <div className="sidebar">
 
       <h2 className="logo">
-        AI GAS
+        FaceMatrix-AI
       </h2>
 
       <ul className="menu">
@@ -48,9 +48,35 @@ function Sidebar() {
                 : {}
             }
           >
-            Attendance
+            Mark Attendance
           </NavLink>
         </li>
+
+        <li>
+          <NavLink
+            to="/attendance-record"
+            style={({ isActive }) =>
+              isActive
+                ? { color: "#3b82f6", fontWeight: "bold" }
+                : {}
+            }
+          >
+            Attendance Record
+          </NavLink>
+        </li>
+          <li>
+          <NavLink
+            to="/holiday-management"
+            style={({ isActive }) =>
+              isActive
+                ? { color: "#3b82f6", fontWeight: "bold" }
+                : {}
+            }
+          >
+            Holiday Management
+          </NavLink>
+        </li>
+
 
         <li>
           <NavLink

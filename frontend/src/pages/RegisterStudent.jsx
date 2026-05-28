@@ -77,7 +77,7 @@ function RegisterStudent() {
       const uploadResponse =
         await API.post(
 
-          `/users/upload/${userId}`,
+          `/users/upload-image/${userId}`,
 
           formData,
 
