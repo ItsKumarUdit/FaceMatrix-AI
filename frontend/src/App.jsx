@@ -16,6 +16,7 @@ import HolidayManagement from "./pages/HolidayManagement";
 import RegisterStudent from "./pages/RegisterStudent";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
+import About from "./pages/About";
 
 
 function App() {
@@ -79,6 +80,10 @@ function App() {
             <Route
               path="/settings"
               element={<Settings />}
+            />
+            <Route
+              path="/About"
+              element={<About />}
             />
 
           </Routes>

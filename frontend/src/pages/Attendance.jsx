@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import API from "../services/api";
 
 function Attendance() {
@@ -400,13 +399,39 @@ function Attendance() {
 
     <div className="dashboard">
 
-      <h1>
+      <h1
+        style={{
+          textAlign: "center",
+          marginTop: "10px",
+          marginBottom: "35px",
+          fontSize: "clamp(2rem, 4vw, 3rem)",
+          fontWeight: "800",
+          letterSpacing: "1px",
+          background:
+            "linear-gradient(to right, #ffffff, #60a5fa, #22c55e)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          textShadow:
+            "0 0 25px rgba(96,165,250,0.25)",
+        }}
+      >
         Attendance History
       </h1>
 
       {/* ================= RECOGNITION ================= */}
 
-      <div className="recognition-box">
+      <div
+        className="recognition-box"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "20px",
+          flexWrap: "wrap",
+          width: "100%",
+          marginBottom: "30px",
+        }}
+      >
 
         <div className="file-upload-wrapper">
 
@@ -449,7 +474,17 @@ function Attendance() {
 
       {/* ================= PREVIEW ================= */}
 
-      <div className="preview-container">
+      <div
+        className="preview-container"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: "16px",
+          width: "100%",
+        }}
+      >
 
         {
 
@@ -460,6 +495,11 @@ function Attendance() {
               <div
                 className="preview-card"
                 key={index}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
               >
 
                 <img
@@ -505,7 +545,12 @@ function Attendance() {
 
         loading && (
 
-          <h3>
+          <h3
+            style={{
+              textAlign: "center",
+              width: "100%",
+            }}
+          >
             Processing AI Recognition...
           </h3>
 
@@ -584,7 +629,18 @@ function Attendance() {
 
       {/* ================= FILTERS ================= */}
 
-      <div className="filter-container">
+      <div
+        className="filter-container"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: "18px",
+          width: "100%",
+          margin: "40px auto 35px auto",
+        }}
+      >
 
         <input
 
@@ -705,7 +761,14 @@ function Attendance() {
 
           (
 
-            <h2>No Attendance Found</h2>
+            <h2
+              style={{
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              No Attendance Found
+            </h2>
 
           )
 

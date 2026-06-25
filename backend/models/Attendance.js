@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const attendanceSchema = new mongoose.Schema({
 
+    session: {
+  type: String,
+  required: true,
+},
+
     studentId: {
 
         type:

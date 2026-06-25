@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     rollNo: {
         type: String,
         required: true,
-        unique: true
+         
     },
 
     className: {
@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema({
     type: [String],
     default: []
 },
+session: {
+  type: String,
+  required: true,
+},
 
     // MULTIPLE EMBEDDINGS
     faceEmbeddings: {
@@ -37,5 +41,17 @@ const userSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
+userSchema.index(
+  {
+    rollNo: 1,
+    className: 1,
+    section: 1,
+    session: 1
+  },
+  {
+    unique: true
+  }
+);
 
 module.exports = mongoose.model("User", userSchema);

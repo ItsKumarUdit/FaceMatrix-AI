@@ -65,12 +65,14 @@ function HolidayForm({ scope, className, section, onAdded }) {
     >
       <div
         style={{
-          fontSize: "12px",
+          fontSize: "15px",
           fontWeight: "700",
           color: "#f8fafc",
-          marginBottom: "14px",
+          marginBottom: "18px",
           textTransform: "uppercase",
-          letterSpacing: "0.8px",
+          letterSpacing: "1px",
+          textAlign: "center",
+          width: "100%",
         }}
       >
         🗓 Mark Holiday — {scopeLabel}
@@ -80,13 +82,23 @@ function HolidayForm({ scope, className, section, onAdded }) {
         style={{
           display: "flex",
           flexWrap: "wrap",
-          gap: "12px",
-          alignItems: "flex-end",
+          gap: "18px",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+          width: "100%",
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
           <label style={labelStyle}>Holiday Title / Reason</label>
-
           <input
             style={inputStyle}
             placeholder="e.g. Diwali, Republic Day..."
@@ -97,7 +109,6 @@ function HolidayForm({ scope, className, section, onAdded }) {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <label style={labelStyle}>Start Date</label>
-
           <input
             type="date"
             style={inputStyle}
@@ -113,7 +124,6 @@ function HolidayForm({ scope, className, section, onAdded }) {
               (leave blank for single day)
             </span>
           </label>
-
           <input
             type="date"
             style={inputStyle}
@@ -129,14 +139,13 @@ function HolidayForm({ scope, className, section, onAdded }) {
             background: loading
               ? "rgba(255,255,255,0.12)"
               : "linear-gradient(135deg, #2563eb, #3b82f6)",
-
             color: "#fff",
             border: "none",
             borderRadius: "14px",
             padding: "10px 22px",
             cursor: loading ? "not-allowed" : "pointer",
             fontWeight: "700",
-            fontSize: "13px",
+            fontSize: "14px",
             height: "44px",
             whiteSpace: "nowrap",
             transition: "all 0.25s ease",
@@ -160,8 +169,10 @@ function HolidayList({ holidays, onDelete }) {
       <p
         style={{
           color: "rgba(255,255,255,0.4)",
-          fontSize: "13px",
+          fontSize: "14px",
           margin: "4px 0 12px",
+          textAlign: "center",
+          width: "100%",
         }}
       >
         No holidays marked yet.
@@ -172,7 +183,16 @@ function HolidayList({ holidays, onDelete }) {
 
   return (
     <div style={{ marginBottom: "10px" }}>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "10px",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
         {show.map((h) => (
           <div
             key={h._id}
@@ -182,7 +202,7 @@ function HolidayList({ holidays, onDelete }) {
               backdropFilter: "blur(10px)",
               borderRadius: "999px",
               padding: "7px 14px",
-              fontSize: "12px",
+              fontSize: "13px",
               display: "flex",
               alignItems: "center",
               gap: "8px",
@@ -201,7 +221,7 @@ function HolidayList({ holidays, onDelete }) {
 
             <span
               style={{
-                fontSize: "10px",
+                fontSize: "11px",
                 background: "rgba(37,99,235,0.25)",
                 color: "#fff",
                 borderRadius: "999px",
@@ -243,7 +263,7 @@ function HolidayList({ holidays, onDelete }) {
             border: "none",
             color: "#60a5fa",
             cursor: "pointer",
-            fontSize: "12px",
+            fontSize: "13px",
             fontWeight: "600",
           }}
         >
@@ -254,12 +274,93 @@ function HolidayList({ holidays, onDelete }) {
   );
 }
 
+// ================= ACCORDION ROW =================
+
+function AccordionRow({ label, isOpen, onToggle, children }) {
+  return (
+    <div
+      style={{
+        background: "rgba(15,23,42,0.82)",
+        backdropFilter: "blur(18px)",
+        border: "1px solid rgba(255,255,255,0.07)",
+        borderRadius: "18px",
+        marginBottom: "16px",
+        overflow: "hidden",
+        boxShadow: isOpen
+          ? "0 12px 40px rgba(0,0,0,0.35)"
+          : "0 4px 20px rgba(0,0,0,0.2)",
+        transition: "box-shadow 0.3s ease",
+      }}
+    >
+      {/* HEADER ROW */}
+      <div
+        onClick={onToggle}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "22px 28px",
+          cursor: "pointer",
+          userSelect: "none",
+          background: isOpen
+            ? "rgba(37,99,235,0.08)"
+            : "transparent",
+          transition: "background 0.25s ease",
+        }}
+      >
+        <h2
+          style={{
+            margin: 0,
+            fontSize: "clamp(1.1rem, 2vw, 1.4rem)",
+            fontWeight: "700",
+            color: "#f8fafc",
+            letterSpacing: "0.3px",
+          }}
+        >
+          {label}
+        </h2>
+
+        <span
+          style={{
+            fontSize: "20px",
+            color: "#60a5fa",
+            transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 0.3s ease",
+            lineHeight: 1,
+          }}
+        >
+          ▼
+        </span>
+      </div>
+
+      {/* CONTENT — smooth slide */}
+      <div
+        style={{
+          maxHeight: isOpen ? "9999px" : "0px",
+          overflow: "hidden",
+          transition: "max-height 0.4s ease",
+        }}
+      >
+        <div style={{ padding: "0 24px 24px 24px" }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ================= MAIN PAGE =================
 
 function HolidayManagement() {
   const [holidays, setHolidays] = useState([]);
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // ================= ACCORDION OPEN STATES =================
+  const [openMarked, setOpenMarked] = useState(false);
+  const [openSchool, setOpenSchool] = useState(false);
+  const [openClass, setOpenClass] = useState(false);
+  const [openSection, setOpenSection] = useState(false);
 
   const fetchHolidays = useCallback(async () => {
     try {
@@ -275,17 +376,13 @@ function HolidayManagement() {
 
     try {
       const res = await API.get("/users");
-
       const students = res.data || [];
-
       const map = {};
 
       students.forEach((s) => {
         const cls = String(s.className);
         const sec = s.section;
-
         if (!map[cls]) map[cls] = new Set();
-
         map[cls].add(sec);
       });
 
@@ -332,74 +429,75 @@ function HolidayManagement() {
       }}
     >
       {/* HEADER */}
+      <h1
+        style={{
+          textAlign: "center",
+          marginTop: "10px",
+          marginBottom: "10px",
+          fontSize: "clamp(2rem, 4vw, 3rem)",
+          fontWeight: "800",
+          letterSpacing: "1px",
+          background: "linear-gradient(to right, #ffffff, #60a5fa, #22c55e)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          textShadow: "0 0 25px rgba(96,165,250,0.25)",
+        }}
+      >
+        Holiday Management
+      </h1>
 
-      <div style={{ marginBottom: "30px" }}>
-        <h1
-          style={{
-            fontSize: "30px",
-            fontWeight: "700",
-            color: "#f8fafc",
-            margin: 0,
-            letterSpacing: "-0.5px",
-            textShadow: "0 2px 18px rgba(59,130,246,0.18)",
-          }}
-        >
-          🗓 Holiday Management
-        </h1>
-
-        <p
-          style={{
-            color: "rgba(255,255,255,0.45)",
-            fontSize: "14px",
-            marginTop: "6px",
-            letterSpacing: "0.2px",
-          }}
-        >
-          Mark holidays for all students, a specific class, or a
-          specific section
-        </p>
-      </div>
+      <p
+        style={{
+          color: "rgba(255,255,255,0.45)",
+          fontSize: "15px",
+          marginBottom: "36px",
+          letterSpacing: "0.2px",
+          textAlign: "center",
+          width: "100%",
+        }}
+      >
+        Mark holidays for all students, a specific class, or a specific section
+      </p>
 
       {loading && (
         <div
           style={{
             color: "rgba(255,255,255,0.45)",
             marginBottom: "20px",
+            textAlign: "center",
+            width: "100%",
+            fontSize: "15px",
           }}
         >
           ⏳ Loading classes...
         </div>
       )}
 
-      {/* MARKED HOLIDAYS */}
+      {/* ================= MARKED HOLIDAYS ROW ================= */}
+      <AccordionRow
+        label="Holidays History"
+        isOpen={openMarked}
+        onToggle={() => setOpenMarked((p) => !p)}
+      >
+        <HolidayList holidays={holidays} onDelete={deleteHoliday} />
+      </AccordionRow>
 
-      <div style={cardStyle}>
-        <h2 style={sectionTitleStyle}>📌 Marked Holidays</h2>
-
-        <HolidayList
-          holidays={holidays}
-          onDelete={deleteHoliday}
-        />
-      </div>
-
-      {/* ALL STUDENTS */}
-
-      <div style={cardStyle}>
-        <h2 style={sectionTitleStyle}>
-          🏫 School-wide Holiday
-        </h2>
-
+      {/* ================= SCHOOL-WIDE ROW ================= */}
+      <AccordionRow
+        label="School-wide Holiday"
+        isOpen={openSchool}
+        onToggle={() => setOpenSchool((p) => !p)}
+      >
         <HolidayForm scope="all" onAdded={onAdded} />
-      </div>
+      </AccordionRow>
 
-      {/* CLASS LEVEL */}
-
+      {/* ================= CLASS LEVEL ROW ================= */}
       {classes.length > 0 && (
-        <div style={cardStyle}>
-          <h2 style={sectionTitleStyle}>
-            📚 Class-level Holiday
-          </h2>
-
+        <AccordionRow
+          label="Class-level Holiday"
+          isOpen={openClass}
+          onToggle={() => setOpenClass((p) => !p)}
+        >
           {classes.map(({ cls }) => (
             <HolidayForm
               key={cls}
@@ -408,17 +506,16 @@ function HolidayManagement() {
               onAdded={onAdded}
             />
           ))}
-        </div>
+        </AccordionRow>
       )}
 
-      {/* SECTION LEVEL */}
-
+      {/* ================= SECTION LEVEL ROW ================= */}
       {classes.length > 0 && (
-        <div style={cardStyle}>
-          <h2 style={sectionTitleStyle}>
-            📌 Section-level Holiday
-          </h2>
-
+        <AccordionRow
+          label="Section-level Holiday"
+          isOpen={openSection}
+          onToggle={() => setOpenSection((p) => !p)}
+        >
           {classes.map(({ cls, sections }) =>
             sections.map((sec) => (
               <HolidayForm
@@ -430,7 +527,7 @@ function HolidayManagement() {
               />
             ))
           )}
-        </div>
+        </AccordionRow>
       )}
     </div>
   );
@@ -438,27 +535,8 @@ function HolidayManagement() {
 
 // ================= SHARED STYLES =================
 
-const cardStyle = {
-  background: "rgba(15,23,42,0.82)",
-  backdropFilter: "blur(18px)",
-  border: "1px solid rgba(255,255,255,0.06)",
-  borderRadius: "22px",
-  padding: "24px",
-  boxShadow: "0 10px 40px rgba(0,0,0,0.28)",
-  marginBottom: "24px",
-};
-
-const sectionTitleStyle = {
-  fontSize: "16px",
-  fontWeight: "600",
-  color: "#f8fafc",
-  letterSpacing: "0.3px",
-  marginTop: 0,
-  marginBottom: "18px",
-};
-
 const labelStyle = {
-  fontSize: "11px",
+  fontSize: "12px",
   fontWeight: "600",
   color: "rgba(255,255,255,0.55)",
   textTransform: "uppercase",
@@ -469,7 +547,7 @@ const inputStyle = {
   padding: "10px 14px",
   border: "1px solid rgba(255,255,255,0.08)",
   borderRadius: "12px",
-  fontSize: "13px",
+  fontSize: "14px",
   outline: "none",
   background: "rgba(255,255,255,0.05)",
   color: "#f8fafc",

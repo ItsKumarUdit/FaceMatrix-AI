@@ -7,7 +7,7 @@ function Sidebar() {
     <div className="sidebar">
 
       <h2 className="logo">
-        FaceMatrix-AI
+        Menubar
       </h2>
 
       <ul className="menu">
@@ -35,7 +35,7 @@ function Sidebar() {
                 : {}
             }
           >
-            Register Student
+            Student Registration
           </NavLink>
         </li>
 
@@ -73,7 +73,7 @@ function Sidebar() {
                 : {}
             }
           >
-            Holiday Management
+            Mark Holiday
           </NavLink>
         </li>
 
@@ -100,7 +100,7 @@ function Sidebar() {
                 : {}
             }
           >
-            Analytics
+            AI Analytics
           </NavLink>
         </li>
 
@@ -116,6 +116,73 @@ function Sidebar() {
             Settings
           </NavLink>
         </li>
+        <li>
+          <NavLink
+            to="/About"
+            style={({ isActive }) =>
+              isActive
+                ? { color: "#3b82f6", fontWeight: "bold" }
+                : {}
+            }
+          >
+            About Us
+          </NavLink>
+        </li>
+        <li>
+
+  <details className="contact-dropdown">
+
+    <summary
+      style={{
+        cursor: "pointer",
+        listStyle: "none",
+        color: "#e2e8f0",
+        fontWeight: "500",
+      }}
+    >
+      Contact Us
+    </summary>
+
+    <div
+      style={{
+        marginTop: "12px",
+        marginLeft: "10px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+      }}
+    >
+
+      <div
+        style={{
+          padding: "10px",
+          borderRadius: "12px",
+          background: "rgba(255,255,255,0.05)",
+          color: "#cbd5e1",
+          fontSize: "14px",
+        }}
+      >
+        📞 +91 9661177921
+      </div>
+
+      <div
+        style={{
+          padding: "10px",
+          borderRadius: "12px",
+          background: "rgba(255,255,255,0.05)",
+          color: "#cbd5e1",
+          fontSize: "14px",
+          wordBreak: "break-word",
+        }}
+      >
+        📧 imkumarudit@gmail.com
+      </div>
+
+    </div>
+
+  </details>
+
+</li>
 
       </ul>
 

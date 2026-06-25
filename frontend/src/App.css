@@ -109,7 +109,7 @@ body{
 }
 
 .card{
-  background-color: #111827;
+  background-color: #020617;
 
   padding: 30px;
 
@@ -1287,4 +1287,20 @@ body{
 
   font-size: 18px;
 
+}
+@keyframes logoDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-200px) scale(0.8);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateY(10px) scale(1.05);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

@@ -242,13 +242,40 @@ function Students() {
 
     <div className="dashboard">
 
-      <h1>
-        Students Page
-      </h1>
+     <h1
+  style={{
+    textAlign: "center",
+    marginTop: "10px",
+    marginBottom: "35px",
+    fontSize: "clamp(2rem, 4vw, 3rem)",
+    fontWeight: "800",
+    letterSpacing: "1px",
+    background:
+      "linear-gradient(to right, #ffffff, #60a5fa, #22c55e)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    textShadow:
+      "0 0 25px rgba(96,165,250,0.25)",
+  }}
+>
+  Students Page
+</h1>
 
       {/* ================= FILTERS ================= */}
 
-      <div className="filter-container">
+      <div
+  className="filter-container"
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "16px",
+    flexWrap: "wrap",
+    width: "100%",
+    margin: "0 auto 35px auto",
+    textAlign: "center",
+  }}
+>
 
         {/* SEARCH */}
 
@@ -359,7 +386,14 @@ function Students() {
 
           (
 
-            <h2>No Students Found</h2>
+            <h2
+  style={{
+    textAlign: "center",
+    width: "100%",
+  }}
+>
+  No Students Found
+</h2>
 
           )
 

@@ -10,6 +10,7 @@ require("../utils/exportUsers");
 const axios = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
+const Session = require("../models/Session");
 
 
 
@@ -25,6 +26,23 @@ const registerUser = async (req, res) => {
             className,
             section
         } = req.body;
+        const activeSession =
+    await Session.findOne({
+        isActive: true
+    });
+
+if (!activeSession) {
+
+    return res.status(400).json({
+
+        success: false,
+
+        message:
+            "No active academic session found"
+
+    });
+
+}
 
         // ================= REQUIRED FIELD VALIDATION =================
         if (
@@ -83,15 +101,18 @@ const registerUser = async (req, res) => {
 
         // ================= SCHOOL-STYLE DUPLICATE CHECK =================
         const existingUser =
-            await User.findOne({
+    await User.findOne({
 
-                rollNo,
+        rollNo,
 
-                className: classNum,
+        className: classNum,
 
-                section: sectionUpper
+        section: sectionUpper,
 
-            });
+        session:
+            activeSession.sessionName
+
+    });
 
         // SAME ROLL + SAME CLASS + SAME SECTION
         if (existingUser) {
@@ -107,19 +128,22 @@ const registerUser = async (req, res) => {
         }
 
         // ================= CREATE NEW USER =================
-        const newUser = new User({
+      const newUser = new User({
 
-            name,
+    name,
 
-            rollNo,
+    rollNo,
 
-            className: classNum,
+    className: classNum,
 
-            section: sectionUpper,
+    section: sectionUpper,
 
-            faceEmbeddings: []
+    session:
+        activeSession.sessionName,
 
-        });
+    faceEmbeddings: []
+
+});
 
         // SAVE USER
         await newUser.save();
@@ -372,7 +396,32 @@ const getUsers = async (req, res) => {
 
     try {
 
-        const users = await User.find();
+        const activeSession =
+            await Session.findOne({
+                isActive: true
+            });
+
+        if (!activeSession) {
+
+            return res.status(400).json({
+                success: false,
+                message: "No active session found"
+            });
+
+        }
+
+        const users = await User.find({
+
+            session:
+                activeSession.sessionName
+
+        }).sort({
+
+            className: 1,
+            section: 1,
+            rollNo: 1
+
+        });
 
         res.status(200).json(users);
 
@@ -466,6 +515,15 @@ const recognizeGroup = async (req, res) => {
                     file.path
                 )
             );
+            const activeSession =
+    await Session.findOne({
+        isActive: true
+    });
+
+formData.append(
+    "session",
+    activeSession.sessionName
+);
 
             // SEND TO FLASK API
             const aiResponse =
@@ -511,19 +569,24 @@ const recognizeGroup = async (req, res) => {
                 }
 
                 // FIND USER
-                const matchedUser =
-                    await User.findOne({
+                const activeSession =
+    await Session.findOne({
+        isActive: true
+    });
 
-                        rollNo:
-                            student.rollNo,
+const matchedUser =
+    await User.findOne({
 
-                        className:
-                            student.className,
+        rollNo: student.rollNo,
 
-                        section:
-                            student.section
+        className: student.className,
 
-                    });
+        section: student.section,
+
+        session:
+            activeSession.sessionName
+
+    });
 
                 if (matchedUser) {
 
@@ -540,27 +603,34 @@ const today = `${day}/${month}/${year}`;
                             .toLocaleTimeString();
 
                     // CHECK EXISTING ATTENDANCE
-                    const existingAttendance =
-                        await Attendance.findOne({
+                 const existingAttendance =
+await Attendance.findOne({
 
-                            rollNo:
-                                matchedUser.rollNo,
+    rollNo:
+        matchedUser.rollNo,
 
-                            className:
-                                matchedUser.className,
+    className:
+        matchedUser.className,
 
-                            section:
-                                matchedUser.section,
+    section:
+        matchedUser.section,
 
-                            date: today
+    session:
+        matchedUser.session,
 
-                        });
+    date:
+        today
+
+});
 
                     // ================= NEW ATTENDANCE =================
 
                     if (!existingAttendance) {
 
                         await Attendance.create({
+
+                            session:
+                                matchedUser.session,
 
                             studentId:
                                 matchedUser._id,
@@ -713,8 +783,31 @@ const getAttendance = async (req, res) => {
 
     try {
 
+        const activeSession =
+            await Session.findOne({
+                isActive: true
+            });
+
+        if (!activeSession) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "No active session found"
+
+            });
+
+        }
+
         const attendance =
-            await Attendance.find()
+            await Attendance.find({
+
+                session:
+                    activeSession.sessionName
+
+            })
             .sort({ createdAt: -1 });
 
         res.status(200).json({
@@ -735,7 +828,8 @@ const getAttendance = async (req, res) => {
 
             success: false,
 
-            message: "Failed to fetch attendance"
+            message:
+                "Failed to fetch attendance"
 
         });
 
@@ -787,9 +881,45 @@ const getAttendanceRecord = async (req, res) => {
         const month = parseInt(req.query.month) || new Date().getMonth() + 1;
         const year  = parseInt(req.query.year)  || new Date().getFullYear();
 
-        const allStudents = await User.find().sort({ className: 1, section: 1, rollNo: 1 });
+       const activeSession =
+    await Session.findOne({
+        isActive: true
+    });
 
-        const allAttendance = await Attendance.find();
+if (!activeSession) {
+
+    return res.status(400).json({
+
+        success: false,
+
+        message:
+            "No active session found"
+
+    });
+
+}
+
+const allStudents =
+    await User.find({
+
+        session:
+            activeSession.sessionName
+
+    }).sort({
+
+        className: 1,
+        section: 1,
+        rollNo: 1
+
+    });
+
+const allAttendance =
+    await Attendance.find({
+
+        session:
+            activeSession.sessionName
+
+    });
 
         // ================= NORMALIZE DATE HELPER =================
         // Handles both M/D/YYYY and MM/DD/YYYY and D/M/YYYY
@@ -988,6 +1118,7 @@ const dateStr = `${day}/${month}/${year}`;
             if (!existing) {
                 // MARK ABSENT
                 await Attendance.create({
+                    session:          student.session,
                     studentId:        student._id,
                     name:             student.name,
                     rollNo:           student.rollNo,

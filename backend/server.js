@@ -6,6 +6,7 @@ const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const holidayRoutes = require("./routes/holidayRoutes");
+const sessionRoutes = require("./routes/sessionRoutes");
 
 const app = express();
 
@@ -13,6 +14,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
+app.use(
+  "/api/sessions",
+  sessionRoutes
+);
+app.use(
+    "/api/analytics",
+    require("./routes/analyticsRoutes")
+);
 
 // ================= DB =================
 connectDB();
@@ -94,15 +103,29 @@ const dateStr = `${day}/${month}/${year}`;
 
                         if (isHoliday) continue;
 
-                        const existing = await Attendance.findOne({
-                            rollNo:    student.rollNo,
-                            className: student.className,
-                            section:   student.section,
-                            date:      dateStr
-                        });
+                        const existing =
+await Attendance.findOne({
+
+    rollNo:
+        student.rollNo,
+
+    className:
+        student.className,
+
+    section:
+        student.section,
+
+    session:
+        student.session,
+
+    date:
+        dateStr
+
+});
 
                         if (!existing) {
                             await Attendance.create({
+                                session:          student.session,
                                 studentId:        student._id,
                                 name:             student.name,
                                 rollNo:           student.rollNo,

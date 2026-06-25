@@ -13,12 +13,22 @@ import {
 import { useEffect, useState } from "react";
 
 import API from "../services/api";
+import gasLogo from "../assets/GAS_LOGO.png";
 
 function Dashboard() {
 
   const [students, setStudents] = useState([]);
   const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedAttendanceImages, setSelectedAttendanceImages] =
+  useState([]);
+
+const [currentImageIndex, setCurrentImageIndex] =
+  useState(0);
+
+const [showImageModal, setShowImageModal] =
+  useState(false);
+  
 
   useEffect(() => {
 
@@ -85,6 +95,45 @@ function Dashboard() {
     }
 
   };
+const openImageModal = (images) => {
+
+  console.log("Modal Opening");
+  console.log(images);
+
+  if (!images || images.length === 0) {
+    alert("No Attendance Images Found");
+    return;
+  }
+
+  setSelectedAttendanceImages(images);
+  setCurrentImageIndex(0);
+  setShowImageModal(true);
+
+};
+
+const nextImage = () => {
+
+  setCurrentImageIndex((prev) =>
+
+    prev === selectedAttendanceImages.length - 1
+      ? 0
+      : prev + 1
+
+  );
+
+};
+
+const prevImage = () => {
+
+  setCurrentImageIndex((prev) =>
+
+    prev === 0
+      ? selectedAttendanceImages.length - 1
+      : prev - 1
+
+  );
+
+};
 
   // ================= PRESENT TODAY =================
 
@@ -200,9 +249,15 @@ presentToday.forEach((item) => {
 
     return (
       <div className="dashboard">
-        <h2 style={{ color: "#cbd5e1" }}>
-          Loading...
-        </h2>
+        <h2
+  style={{
+    color: "#cbd5e1",
+    textAlign: "center",
+    width: "100%",
+  }}
+>
+  Updating...
+</h2>
       </div>
     );
 
@@ -212,7 +267,251 @@ presentToday.forEach((item) => {
 
     <div className="dashboard">
 
-      <h1>Analytics Dashboard</h1>
+    {/* ================= HERO HEADING ================= */}
+
+<div
+  style={{
+    position: "relative",
+    overflow: "hidden",
+    borderRadius: "28px",
+    padding: "45px 35px",
+    marginBottom: "35px",
+    background:
+     "linear-gradient(135deg, #0f172a 0%, #111827 35%, #1e293b 100%)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    boxShadow:
+      "0 10px 40px rgba(0,0,0,0.45)",
+
+    transition:
+      "all 0.4s ease",
+
+    cursor: "pointer",
+  }}
+
+  onMouseEnter={(e) => {
+    e.currentTarget.style.transform =
+      "scale(1.02)";
+    e.currentTarget.style.boxShadow =
+      "0 20px 60px rgba(37,99,235,0.10)";
+  }}
+
+  onMouseLeave={(e) => {
+    e.currentTarget.style.transform =
+      "scale(1)";
+    e.currentTarget.style.boxShadow =
+      "0 10px 40px rgba(0,0,0,0.45)";
+  }}
+>
+
+  {/* Glow Effects */}
+
+  <div
+    style={{
+      position: "absolute",
+      width: "300px",
+      height: "300px",
+      background:
+        "rgba(37, 99, 235, 0.25)",
+      borderRadius: "50%",
+      top: "-120px",
+      right: "-80px",
+      filter: "blur(80px)",
+    }}
+  />
+
+  <div
+    style={{
+      position: "absolute",
+      width: "250px",
+      height: "250px",
+      background:
+        "rgba(34, 197, 94, 0.15)",
+      borderRadius: "50%",
+      bottom: "-120px",
+      left: "-60px",
+      filter: "blur(80px)",
+    }}
+  />
+
+  {/* Main Content */}
+
+ <div
+  style={{
+    position: "relative",
+    zIndex: 2,
+  }}
+>
+ <img
+  src={gasLogo}
+  alt="FaceMatrix Logo"
+  style={{
+    position: "absolute",
+    left: "25px",
+    top: "-20px",
+    width: "220px",
+    height: "220px",
+    objectFit: "contain",
+
+    filter:
+      "drop-shadow(0 0 20px rgba(96,165,250,0.6))",
+
+    animation: "logoDrop 1.2s ease-out",
+
+    transition:
+      "transform 0.4s ease, filter 0.4s ease",
+
+    cursor: "pointer",
+  }}
+
+  onMouseEnter={(e) => {
+    e.currentTarget.style.transform =
+      "scale(1.12)";
+     
+  }}
+
+  onMouseLeave={(e) => {
+    e.currentTarget.style.transform =
+      "scale(1)";
+    e.currentTarget.style.filter =
+      "drop-shadow(0 0 20px rgba(96,165,250,0.6))";
+  }}
+/>
+
+    <div
+      style={{
+        display: "flex",
+alignItems: "center",
+justifyContent: "center",
+gap: "15px",
+marginBottom: "18px",
+flexWrap: "wrap",
+textAlign: "center",
+      }}
+    >
+
+
+
+      <div>
+
+        <h1
+          style={{
+            margin: 0,
+            fontSize: "clamp(2rem, 5vw, 3.5rem)",
+            fontWeight: "800",
+            lineHeight: "1.1",
+            background:
+              "linear-gradient(to right, #ffffff, #60a5fa, #22c55e)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            letterSpacing: "1px",
+          }}
+        >
+          FaceMatrix-AI
+        </h1>
+
+        <p
+          style={{
+            margin: "8px 0 0 0",
+            color: "#cbd5e1",
+            fontSize: "1.1rem",
+            letterSpacing: "2px",
+            textTransform: "uppercase",
+          }}
+        >
+          Group Face Detection Intelligence
+        </p>
+
+      </div>
+
+    </div>
+
+    <div
+      style={{
+        display: "flex",
+alignItems: "center",
+justifyContent: "center",
+gap: "30px",
+marginBottom: "18px",
+flexWrap: "wrap",
+textAlign: "center",
+      }}
+    >
+
+      <div
+        style={{
+          padding: "10px 18px",
+          borderRadius: "999px",
+          background:
+            "rgba(255,255,255,0.08)",
+          color: "#e2e8f0",
+          backdropFilter: "blur(10px)",
+          border:
+            "1px solid rgba(255,255,255,0.08)",
+          fontSize: "14px",
+          fontWeight: "600",
+        }}
+      >
+        AI Powered Recognition
+      </div>
+
+      <div
+        style={{
+          padding: "10px 18px",
+          borderRadius: "999px",
+          background:
+            "rgba(255,255,255,0.08)",
+          color: "#e2e8f0",
+          backdropFilter: "blur(10px)",
+          border:
+            "1px solid rgba(255,255,255,0.08)",
+          fontSize: "14px",
+          fontWeight: "600",
+        }}
+      >
+        Real-Time Attendance
+      </div>
+
+      <div
+        style={{
+          padding: "10px 18px",
+          borderRadius: "999px",
+          background:
+            "rgba(255,255,255,0.08)",
+          color: "#e2e8f0",
+          backdropFilter: "blur(10px)",
+          border:
+            "1px solid rgba(255,255,255,0.08)",
+          fontSize: "14px",
+          fontWeight: "600",
+        }}
+      >
+        Smart Analytics Dashboard
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+      <h1
+  style={{
+    textAlign: "center",
+    marginTop: "25px",
+    marginBottom: "35px",
+    fontSize: "clamp(2rem, 4vw, 3rem)",
+    fontWeight: "800",
+    letterSpacing: "1px",
+    background:
+      "linear-gradient(to right, #ffffff, #60a5fa, #22c55e)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    textShadow:
+      "0 0 25px rgba(96,165,250,0.25)",
+  }}
+>
+  Analytics Dashboard
+</h1>
 
       {/* ================= STATS ================= */}
 
@@ -222,7 +521,7 @@ presentToday.forEach((item) => {
           gridTemplateColumns:
             "repeat(auto-fit, minmax(220px, 1fr))",
           gap: "20px",
-          marginTop: "30px",
+          marginTop: "40px",
         }}
       >
 
@@ -338,73 +637,139 @@ presentToday.forEach((item) => {
 
       </div>
 
-      {/* ================= RECENT ATTENDANCE ================= */}
+     {/* ================= RECENT ATTENDANCE ================= */}
 
-      <div
-        className="table-container"
-        style={{ marginTop: "40px" }}
-      >
+<div
+  className="table-container"
+  style={{ marginTop: "40px" }}
+>
 
-        <h2 style={{ marginBottom: "20px" }}>
-          Recent Attendance
-        </h2>
+  <h2 style={{ marginBottom: "20px" }}>
+    Recent Attendance
+  </h2>
 
-        <table className="attendance-table">
+  <table className="attendance-table">
 
-          <thead>
+    <thead>
 
-            <tr>
-              <th>Name</th>
-              <th>Roll No</th>
-              <th>Class</th>
-              <th>Section</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Action</th>
-            </tr>
+      <tr>
+        <th>Name</th>
+        <th>Roll No</th>
+        <th>Class</th>
+        <th>Section</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Images</th>
+        <th>Action</th>
+      </tr>
 
-          </thead>
+    </thead>
 
-          <tbody>
+    <tbody>
 
-            {recentAttendance.map((item) => (
+      {recentAttendance.map((item) => (
 
-              <tr key={item._id}>
+        <tr key={item._id}>
 
-                <td>{item.name}</td>
-                <td>{item.rollNo}</td>
-                <td>{item.className}</td>
-                <td>{item.section}</td>
-                <td>{item.date}</td>
-                <td>{item.time}</td>
+          <td>{item.name}</td>
+          <td>{item.rollNo}</td>
+          <td>{item.className}</td>
+          <td>{item.section}</td>
+          <td>{item.date}</td>
+          <td>{item.time}</td>
 
-                <td>
+          <td>
 
-                  <button
-                    className="attendance-delete-btn"
-                    onClick={() =>
-                      deleteAttendance(item._id)
-                    }
-                  >
-                    Delete
-                  </button>
+            <button
+              className="view-image-btn"
+              onClick={() => {
+  console.log(item);
+  console.log(item.attendanceImages);
+  openImageModal(item.attendanceImages);
+}}
+            >
+              View Images
+            </button>
 
-                </td>
+          </td>
 
-              </tr>
+          <td>
 
-            ))}
+            <button
+              className="attendance-delete-btn"
+              onClick={() =>
+                deleteAttendance(item._id)
+              }
+            >
+              Delete
+            </button>
 
-          </tbody>
+          </td>
 
-        </table>
+        </tr>
+
+      ))}
+
+    </tbody>
+
+</table>
+
+</div>
+
+{/* ================= IMAGE MODAL ================= */}
+
+{
+  showImageModal && (
+
+    <div className="image-modal-overlay">
+
+      <div className="image-modal">
+
+        <button
+          className="close-modal-btn"
+          onClick={() =>
+            setShowImageModal(false)
+          }
+        >
+          ✖
+        </button>
+
+        <img
+          src={`http://localhost:5000/${selectedAttendanceImages[currentImageIndex]?.replace(/\\/g, "/")}`}
+          alt="attendance"
+          className="student-preview-image"
+        />
+
+        <div className="image-navigation">
+
+          <button
+            onClick={prevImage}
+            className="nav-btn"
+          >
+            Previous
+          </button>
+
+          <button
+            onClick={nextImage}
+            className="nav-btn"
+          >
+            Next
+          </button>
+
+        </div>
 
       </div>
 
     </div>
 
-  );
+  )
+}
+
+</div>
+
+);
 
 }
+
 
 export default Dashboard;
