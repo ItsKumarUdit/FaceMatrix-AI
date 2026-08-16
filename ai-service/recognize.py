@@ -14,7 +14,7 @@ UPLOAD_FOLDER = "group_uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ================= INSIGHTFACE =================
-face_app = FaceAnalysis(name="buffalo_l")
+face_app = FaceAnalysis(name='buffalo_l')
 face_app.prepare(ctx_id=0, det_size=(640, 640))
 
 print("\n===================================")
