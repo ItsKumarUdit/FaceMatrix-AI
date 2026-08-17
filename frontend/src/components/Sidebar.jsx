@@ -128,6 +128,18 @@ function Sidebar() {
             About Us
           </NavLink>
         </li>
+         <li>
+          <NavLink
+            to="/Fee"
+            style={({ isActive }) =>
+              isActive
+                ? { color: "#3b82f6", fontWeight: "bold" }
+                : {}
+            }
+          >
+            Fee Structure
+          </NavLink>
+        </li>
         <li>
 
   <details className="contact-dropdown">

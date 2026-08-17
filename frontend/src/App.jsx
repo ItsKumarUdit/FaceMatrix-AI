@@ -17,6 +17,7 @@ import RegisterStudent from "./pages/RegisterStudent";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import About from "./pages/About";
+import Fee from "./pages/Fee";
 
 
 function App() {
@@ -85,6 +86,7 @@ function App() {
               path="/About"
               element={<About />}
             />
+            <Route path="/Fee" element={<Fee />} />
 
           </Routes>
 
