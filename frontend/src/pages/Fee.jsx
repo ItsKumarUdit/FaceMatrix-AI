@@ -10,7 +10,7 @@ const FeeStructure = () => {
         height: "80vh",
       }}
     >
-      <h1>Fee Structure coming soon...</h1>
+      <h1>Studnet Fee Structure coming soon...</h1>
     </div>
   );
 };
