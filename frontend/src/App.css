@@ -1304,3 +1304,227 @@ body{
     transform: translateY(0) scale(1);
   }
 }
+/* ================================
+   FEE STRUCTURE PAGE
+================================ */
+
+.fee-page {
+  padding: 35px 45px;
+  min-height: 100vh;
+  color: #f8fafc;
+}
+
+/* Header */
+
+.fee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.fee-header h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.fee-header p {
+  margin: 7px 0 0;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.fee-session {
+  background: #1e293b;
+  border: 1px solid #334155;
+  padding: 14px 22px;
+  border-radius: 12px;
+  text-align: right;
+}
+
+.fee-session span {
+  display: block;
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.fee-session strong {
+  font-size: 16px;
+}
+
+/* Main Card */
+
+.fee-card {
+  background: #151f31;
+  border: 1px solid #263449;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.fee-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.fee-card-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.fee-card-header p {
+  margin: 6px 0 0;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.fee-card-header select {
+  background: #1e293b;
+  color: #f8fafc;
+  border: 1px solid #3b4b63;
+  border-radius: 9px;
+  padding: 11px 15px;
+  min-width: 190px;
+  outline: none;
+  cursor: pointer;
+}
+
+.fee-card-header select:focus {
+  border-color: #3b82f6;
+}
+
+/* Table */
+
+.fee-table-wrapper {
+  overflow-x: auto;
+}
+
+.fee-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.fee-table th {
+  background: #1e293b;
+  color: #cbd5e1;
+  text-align: left;
+  padding: 15px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.fee-table td {
+  padding: 16px 15px;
+  border-bottom: 1px solid #263449;
+  color: #e2e8f0;
+  font-size: 14px;
+}
+
+.fee-table td:nth-child(2) {
+  color: #94a3b8;
+}
+
+.fee-table td:last-child,
+.fee-table th:last-child {
+  text-align: right;
+  font-weight: 600;
+}
+
+.fee-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.fee-table tbody tr:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.fee-table tfoot td {
+  border: none;
+  padding-top: 20px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.fee-table tfoot td:last-child {
+  color: #60a5fa;
+  font-size: 20px;
+}
+
+/* Summary */
+
+.fee-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.fee-summary-card {
+  background: #151f31;
+  border: 1px solid #263449;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.fee-summary-card span {
+  display: block;
+  color: #94a3b8;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.fee-summary-card strong {
+  font-size: 18px;
+}
+
+.status-demo {
+  color: #60a5fa;
+}
+
+/* Note */
+
+.fee-note {
+  margin-top: 20px;
+  padding: 16px 18px;
+  background: rgba(59, 130, 246, 0.07);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 10px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.fee-note strong {
+  color: #cbd5e1;
+}
+
+/* Responsive */
+
+@media (max-width: 800px) {
+  .fee-page {
+    padding: 25px 20px;
+  }
+
+  .fee-header,
+  .fee-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .fee-session {
+    text-align: left;
+  }
+
+  .fee-card-header select {
+    width: 100%;
+  }
+
+  .fee-summary {
+    grid-template-columns: 1fr;
+  }
+}
